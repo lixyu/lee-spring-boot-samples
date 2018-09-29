@@ -1,0 +1,52 @@
+server:
+  port: 4000
+  servlet:
+    context-path: /
+
+---
+spring:
+  application:
+    name: api-gateway-demo
+  nodeId: ${nodeId:1}
+  redis:
+    host: 10.138.61.139
+    port: 6900
+    password: 123456
+management:
+  endpoints:
+    web:
+      exposure:
+        include: ["health","prometheus"]
+---
+spring:
+  cloud:
+    consul:
+      discovery:
+        heartbeat:
+          enabled: true
+          ttlValue: 5
+        enabled: true
+        register: true
+        prefer-ip-address: true
+        instance-id: ${spring.application.name}:${vcap.application.instance_id:${spring.application.instance_id:${random.value}}}
+      host: localhost
+      port: 8500
+
+    gateway:
+      discovery:
+        locator:
+          enabled: true
+          lower-case-service-id: true
+      routes:
+      - id: consul-service-demo
+        #uri: http://localhost:8502
+        uri: http://baidu.com:80/
+        predicates:
+        - Path=/baidu
+        filters:
+        - RateLimitFilter=1,2
+#        - name: RequestRateLimiter
+#          args:
+#            redis-rate-limiter.replenishRate: 1  # 令牌桶的容积
+#            redis-rate-limiter.burstCapacity: 2  # 流速 每秒
+#            key-resolver: "#{@remoteAddrKeyResolver}" #SPEL表达式去的对应的bean

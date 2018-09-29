@@ -1,0 +1,21 @@
+spring:
+  application:
+    name: consul-service-demo
+  cloud:
+    consul:
+      port: 8500
+      host: 127.0.0.1
+      discovery:
+        heartbeat:
+          enabled: true
+          ttlValue: 5
+        preferIpAddress: true
+        enabled: true
+        instanceId: ${spring.application.name}:${vcap.application.instance_id:${spring.application.instance_id:${random.value}}}
+        #instanceId: ${spring.application.name}
+        query-passing: true
+        register: true
+server:
+  port: 8502
+  servlet: 
+    context-path: /
