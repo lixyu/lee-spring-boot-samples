@@ -13,7 +13,6 @@ public class TestController {
 
     @GetMapping("/test")
     public Mono<String> test() throws Exception {
-        throw new  Exception("test");
-//        return Mono.justOrEmpty("123");
+        return Mono.justOrEmpty("123");
     }
 }

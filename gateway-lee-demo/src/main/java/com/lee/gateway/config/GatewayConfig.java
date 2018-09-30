@@ -1,6 +1,7 @@
 package com.lee.gateway.config;
 
 import com.alibaba.fastjson.JSON;
+import com.lee.gateway.filter.CustomFilter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.cloud.gateway.filter.GlobalFilter;
@@ -44,6 +45,10 @@ public class GatewayConfig {
     return new AuditProperties();
   }
 
+  @Bean
+  public CustomFilter customFilter(){
+    return  new CustomFilter();
+  }
   @Bean
   @Order(-1)
   public GlobalFilter a() {

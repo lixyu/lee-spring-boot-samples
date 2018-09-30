@@ -6,7 +6,7 @@ server:
 ---
 spring:
   application:
-    name: api-gateway-demo
+    name: gateway-lee-demo
   nodeId: ${nodeId:1}
   redis:
     host: 10.138.61.139
@@ -22,9 +22,9 @@ spring:
   cloud:
     consul:
       discovery:
-        heartbeat:
-          enabled: true
-          ttlValue: 5
+        health-check-interval: 5s
+        health-check-critical-timeout: 20s
+        health-check-timeout: 5s
         enabled: true
         register: true
         prefer-ip-address: true
@@ -39,12 +39,14 @@ spring:
           lower-case-service-id: true
       routes:
       - id: consul-service-demo
-        #uri: http://localhost:8502
+        #uri: http://localhost:4000
         uri: http://baidu.com:80/
         predicates:
-        - Path=/baidu
+        - Path=/baidu/*
         filters:
-        - RateLimitFilter=1,2
+        #- CustomFilter
+        #- stripPrefix=1
+        - CustomFilter
 #        - name: RequestRateLimiter
 #          args:
 #            redis-rate-limiter.replenishRate: 1  # 令牌桶的容积
