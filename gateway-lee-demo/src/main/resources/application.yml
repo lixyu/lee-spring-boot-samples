@@ -44,7 +44,6 @@ spring:
         predicates:
         - Path=/baidu/*
         filters:
-        #- CustomFilter
         #- stripPrefix=1
         - CustomFilter
 #        - name: RequestRateLimiter

@@ -3,6 +3,7 @@ package com.lee.gateway.filter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
+import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFactory;
 import org.springframework.core.Ordered;
 import org.springframework.stereotype.Component;
 import org.springframework.web.server.ServerWebExchange;
@@ -14,22 +15,21 @@ import reactor.core.publisher.Mono;
  */
 @Slf4j
 @Component
-public class CustomFilter implements GatewayFilter, Ordered {
+public class CustomFilter extends AbstractGatewayFilterFactory{
 
     private static  final String COUNT_START_TIME="countStartTime";
 
     @Override
-    public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
-        exchange.getAttributes().put(COUNT_START_TIME,System.currentTimeMillis());
-        return chain.filter(exchange).then(Mono.fromRunnable(()->{
-            Long startTime=exchange.getAttribute(COUNT_START_TIME);
-            Long runTime=System.currentTimeMillis()-startTime;
-            log.info(exchange.getRequest().getURI().getRawPath() + ": " + runTime + "ms");
-        }));
-    }
+    public GatewayFilter apply(Object config) {
 
-    @Override
-    public int getOrder() {
-        return 0;
+        return (exchange, chain) -> {
+           exchange.getAttributes().put(COUNT_START_TIME,System.currentTimeMillis());
+           return chain.filter(exchange).then(Mono.fromRunnable(()->{
+                Long startTime=exchange.getAttribute(COUNT_START_TIME);
+                Long runTime=System.currentTimeMillis()-startTime;
+                log.info(exchange.getRequest().getURI().getRawPath() + ": " + runTime + "ms");
+            }));
+
+        };
     }
 }
